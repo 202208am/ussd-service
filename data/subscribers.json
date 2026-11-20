@@ -1,0 +1,17 @@
+
+[
+  {
+    "msisdn": "996770123456",
+    "balance": 1000,
+    "internet_mb": 5000,
+    "minutes": 100,
+    "sms": 50
+  },
+  {
+    "msisdn": "996700111222",
+    "balance": 500,
+    "internet_mb": 2000,
+    "minutes": 50,
+    "sms": 20
+  }
+]
