@@ -16,6 +16,60 @@ class Subscriber(models.Model):
         verbose_name_plural = "Абоненты"
 
 
+class PackageCategory(models.Model):
+    code = models.CharField("Код меню", max_length=10, unique=True)
+    package_key = models.CharField("Ключ пакета", max_length=30, unique=True)
+    title = models.CharField("Название", max_length=100)
+    unit = models.CharField("Единица", max_length=20)
+    sort_order = models.PositiveSmallIntegerField("Порядок", default=0)
+    is_active = models.BooleanField("Активна", default=True)
+
+    def __str__(self):
+        return f"{self.code}. {self.title}"
+
+    class Meta:
+        verbose_name = "Категория пакета"
+        verbose_name_plural = "Категории пакетов"
+        ordering = ["sort_order", "code"]
+
+
+class PackageOffer(models.Model):
+    category = models.ForeignKey(
+        PackageCategory,
+        on_delete=models.CASCADE,
+        related_name="offers",
+        verbose_name="Категория",
+    )
+    code = models.CharField("Код меню", max_length=10)
+    label = models.CharField("Название", max_length=100)
+    amount = models.PositiveIntegerField("Объём")
+    price = models.DecimalField("Цена", max_digits=12, decimal_places=2)
+    sort_order = models.PositiveSmallIntegerField("Порядок", default=0)
+    is_active = models.BooleanField("Активна", default=True)
+
+    def __str__(self):
+        return f"{self.category.code}.{self.code} {self.label}"
+
+    class Meta:
+        verbose_name = "Предложение пакета"
+        verbose_name_plural = "Предложения пакетов"
+        ordering = ["sort_order", "code"]
+        unique_together = [("category", "code")]
+
+
+class UssdMessage(models.Model):
+    key = models.SlugField("Ключ", max_length=64, unique=True)
+    text = models.TextField("Текст")
+
+    def __str__(self):
+        return self.key
+
+    class Meta:
+        verbose_name = "USSD сообщение"
+        verbose_name_plural = "USSD сообщения"
+        ordering = ["key"]
+
+
 class Transfer(models.Model):
     STATUS_CHOICES = [
         ("done", "Выполнен"),

@@ -1,12 +1,47 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
-from .models import OperationLog, Subscriber, Transfer, USSDSession
+from .models import (
+    OperationLog,
+    PackageCategory,
+    PackageOffer,
+    Subscriber,
+    Transfer,
+    USSDSession,
+    UssdMessage,
+)
 
 
 @admin.register(Subscriber)
-class SubscriberAdmin(admin.ModelAdmin):
+class SubscriberAdmin(TranslationAdmin):
     list_display = ("msisdn", "balance", "tariff")
     search_fields = ("msisdn",)
+
+
+class PackageOfferInline(TranslationTabularInline):
+    model = PackageOffer
+    extra = 0
+
+
+@admin.register(PackageCategory)
+class PackageCategoryAdmin(TranslationAdmin):
+    list_display = ("code", "title", "package_key", "unit", "sort_order", "is_active")
+    list_filter = ("is_active",)
+    search_fields = ("code", "title", "package_key")
+    inlines = [PackageOfferInline]
+
+
+@admin.register(PackageOffer)
+class PackageOfferAdmin(TranslationAdmin):
+    list_display = ("category", "code", "label", "amount", "price", "is_active")
+    list_filter = ("category", "is_active")
+    search_fields = ("label", "code")
+
+
+@admin.register(UssdMessage)
+class UssdMessageAdmin(TranslationAdmin):
+    list_display = ("key", "text")
+    search_fields = ("key", "text")
 
 
 @admin.register(Transfer)

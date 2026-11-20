@@ -1,9 +1,10 @@
+from django.utils import translation
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.views import exception_handler as drf_exception_handler
 
-from .engine import process_ussd
+from .engine import process_ussd, refresh_ussd
 from .models import OperationLog
 from .serializers import OperationLogSerializer, UssdRequestSerializer
 
@@ -32,11 +33,21 @@ class USSDView(APIView):
             )
 
         data = serializer.validated_data
-        result = process_ussd(
-            msisdn=data["msisdn"],
-            session_id=data["session_id"],
-            user_input=data["input"],
-        )
+        language = data.get("language")
+        if language:
+            translation.activate(language)
+
+        if data["refresh"]:
+            result = refresh_ussd(
+                msisdn=data["msisdn"],
+                session_id=data["session_id"],
+            )
+        else:
+            result = process_ussd(
+                msisdn=data["msisdn"],
+                session_id=data["session_id"],
+                user_input=data["input"],
+            )
         return Response(result, status=status.HTTP_200_OK)
 
 

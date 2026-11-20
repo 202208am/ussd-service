@@ -94,13 +94,16 @@ button:hover { background: #486083; }
     <span>● ● ● 100%</span>
   </div>
 
-  <div class="screen" id="screen">
-Введите USSD-код для начала.
-  </div>
+  <div class="screen" id="screen">Введите USSD-код для начала.</div>
 
   <input id="msisdn"
     value="996700111111"
     placeholder="Номер абонента">
+
+  <select id="language" style="width:100%;padding:12px;border-radius:10px;border:1px solid #56637a;background:#151e2e;color:white;font-size:15px;margin-bottom:12px;">
+    <option value="ru">Русский</option>
+    <option value="ky">Кыргызча</option>
+  </select>
 
   <input id="entry"
     value="*123#"
@@ -109,10 +112,10 @@ button:hover { background: #486083; }
   <div class="keys" id="keys"></div>
 
   <div class="actions">
-    <button class="call" onclick="sendUSSD()">
+    <button class="call" id="send-button" onclick="sendUSSD()">
       Отправить
     </button>
-    <button class="end" onclick="resetSession()">
+    <button class="end" id="end-button" onclick="resetSession()">
       Завершить
     </button>
   </div>
@@ -129,6 +132,56 @@ const statusEl = document.getElementById("status");
 
 let sessionId = crypto.randomUUID();
 let active = false;
+let lastReadOnlyCode = null;
+const language = document.getElementById("language");
+const msisdnInput = document.getElementById("msisdn");
+const uiText = {
+  ru: {
+    initial: "Введите USSD-код для начала.",
+    phone: "Номер абонента",
+    code: "USSD-код или ответ",
+    send: "Отправить",
+    end: "Завершить",
+    ready: "Готов к подключению",
+    sending: "Отправка запроса...",
+    missing: "Введите номер и команду.",
+    apiError: "Ошибка API: ",
+    active: "USSD-сессия активна",
+    finished: "USSD-сессия завершена",
+    connectionError: "Ошибка подключения: ",
+    offline: "Нет соединения",
+    ended: "Сессия завершена. Введите USSD-код.",
+    switched: "Язык переключён. Отправьте USSD-код, чтобы получить данные на выбранном языке."
+  },
+  ky: {
+    initial: "Баштоо үчүн USSD-кодду киргизиңиз.",
+    phone: "Абоненттин номери",
+    code: "USSD-код же жооп",
+    send: "Жөнөтүү",
+    end: "Аяктоо",
+    ready: "Туташууга даяр",
+    sending: "Сурам жөнөтүлүүдө...",
+    missing: "Номерди жана буйрукту киргизиңиз.",
+    apiError: "API катасы: ",
+    active: "USSD-сеанс активдүү",
+    finished: "USSD-сеанс аяктады",
+    connectionError: "Туташуу катасы: ",
+    offline: "Байланыш жок",
+    ended: "Сеанс аяктады. USSD-кодду киргизиңиз.",
+    switched: "Тил өзгөртүлдү. Тандалган тилдеги маалыматты алуу үчүн USSD-кодду жөнөтүңүз."
+  }
+};
+
+function updateInterfaceLanguage() {
+  const t = uiText[language.value] || uiText.ru;
+  document.documentElement.lang = language.value;
+  msisdnInput.placeholder = t.phone;
+  entry.placeholder = t.code;
+  document.getElementById("send-button").textContent = t.send;
+  document.getElementById("end-button").textContent = t.end;
+  statusEl.textContent = t.ready;
+  screen.textContent = active ? screen.textContent : t.initial;
+}
 
 for (const key of ["1","2","3","4","5","6",
                    "7","8","9","*","0","#"]) {
@@ -141,9 +194,62 @@ for (const key of ["1","2","3","4","5","6",
 function resetSession() {
   sessionId = crypto.randomUUID();
   active = false;
+  lastReadOnlyCode = null;
   entry.value = "*123#";
-  screen.textContent = "Сессия завершена. Введите USSD-код.";
-  statusEl.textContent = "Готов к подключению";
+  const t = uiText[language.value] || uiText.ru;
+  screen.textContent = t.ended;
+  statusEl.textContent = t.ready;
+}
+
+async function refreshUSSD() {
+  const t = uiText[language.value] || uiText.ru;
+  const msisdn = msisdnInput.value.trim();
+  try {
+    const response = await fetch("/api/v1/ussd/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        msisdn,
+        session_id: sessionId,
+        input: "",
+        language: language.value,
+        refresh: true
+      })
+    });
+    const data = await response.json();
+    screen.textContent = data.text ?? JSON.stringify(data, null, 2);
+    if (!response.ok || data.end) {
+      active = false;
+      statusEl.textContent = t.ready;
+    } else {
+      statusEl.textContent = t.active;
+    }
+  } catch (error) {
+    screen.textContent = t.connectionError + error.message;
+    statusEl.textContent = t.offline;
+  }
+}
+
+async function refreshReadOnlyResult() {
+  const t = uiText[language.value] || uiText.ru;
+  try {
+    const response = await fetch("/api/v1/ussd/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        msisdn: msisdnInput.value.trim(),
+        session_id: sessionId,
+        input: lastReadOnlyCode,
+        language: language.value
+      })
+    });
+    const data = await response.json();
+    screen.textContent = data.text ?? JSON.stringify(data, null, 2);
+    statusEl.textContent = response.ok ? t.finished : t.apiError + response.status;
+  } catch (error) {
+    screen.textContent = t.connectionError + error.message;
+    statusEl.textContent = t.offline;
+  }
 }
 
 async function sendUSSD() {
@@ -151,13 +257,15 @@ async function sendUSSD() {
   const value = entry.value.trim();
 
   if (!msisdn || !value) {
-    screen.textContent = "Введите номер и команду.";
+    screen.textContent = (uiText[language.value] || uiText.ru).missing;
     return;
   }
 
   const userInput = value;
+  lastReadOnlyCode = null;
 
-  statusEl.textContent = "Отправка запроса...";
+  const t = uiText[language.value] || uiText.ru;
+  statusEl.textContent = t.sending;
 
   try {
     const response = await fetch("/api/v1/ussd/", {
@@ -168,7 +276,8 @@ async function sendUSSD() {
       body: JSON.stringify({
         msisdn: msisdn,
         session_id: sessionId,
-        input: userInput
+        input: userInput,
+        language: document.getElementById("language").value
       })
     });
 
@@ -178,30 +287,46 @@ async function sendUSSD() {
       JSON.stringify(data, null, 2);
 
     if (!response.ok) {
-      statusEl.textContent = "Ошибка API: " + response.status;
+      statusEl.textContent = t.apiError + response.status;
       return;
     }
 
     active = data.end !== true;
+    lastReadOnlyCode = !active && ["*100#", "*102#"].includes(userInput)
+      ? userInput
+      : null;
     entry.value = "";
 
     statusEl.textContent = active
-      ? "USSD-сессия активна"
-      : "USSD-сессия завершена";
+      ? t.active
+      : t.finished;
 
     if (!active) {
       sessionId = crypto.randomUUID();
     }
 
   } catch (error) {
-    screen.textContent = "Ошибка подключения: " + error.message;
-    statusEl.textContent = "Нет соединения";
+    screen.textContent = t.connectionError + error.message;
+    statusEl.textContent = t.offline;
   }
 }
 
 entry.addEventListener("keydown", event => {
   if (event.key === "Enter") sendUSSD();
 });
+
+language.addEventListener("change", () => {
+  updateInterfaceLanguage();
+  if (active) {
+    refreshUSSD();
+  } else if (lastReadOnlyCode) {
+    refreshReadOnlyResult();
+  } else {
+    screen.textContent = (uiText[language.value] || uiText.ru).switched;
+  }
+});
+
+updateInterfaceLanguage();
 </script>
 </body>
 </html>
