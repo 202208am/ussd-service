@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USSD Simulator</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg,#101827,#25395b);
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.phone {
+  width: 350px;
+  max-width: 100%;
+  background: #10151f;
+  border: 7px solid #343d4b;
+  border-radius: 38px;
+  padding: 22px;
+  color: white;
+  box-shadow: 0 25px 70px #0008;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+.screen {
+  background: #202c40;
+  border-radius: 16px;
+  padding: 18px;
+  min-height: 180px;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #56637a;
+  background: #151e2e;
+  color: white;
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+.keys {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin: 12px 0;
+}
+button {
+  padding: 15px;
+  border: 0;
+  border-radius: 12px;
+  background: #34445e;
+  color: white;
+  font-size: 19px;
+  cursor: pointer;
+}
+button:hover { background: #486083; }
+.actions {
+  display: flex;
+  gap: 10px;
+}
+.actions button {
+  flex: 1;
+  font-size: 15px;
+}
+.call { background: #16a765; }
+.end { background: #cf4050; }
+.status {
+  font-size: 12px;
+  color: #a9b7ce;
+  margin-top: 12px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="header">
+    <span>USSD SERVICE</span>
+    <span>● ● ● 100%</span>
+  </div>
+
+  <div class="screen" id="screen">
+Введите USSD-код для начала.
+  </div>
+
+  <input id="msisdn"
+    value="996700111111"
+    placeholder="Номер абонента">
+
+  <input id="entry"
+    value="*123#"
+    placeholder="USSD-код или ответ">
+
+  <div class="keys" id="keys"></div>
+
+  <div class="actions">
+    <button class="call" onclick="sendUSSD()">
+      Отправить
+    </button>
+    <button class="end" onclick="resetSession()">
+      Завершить
+    </button>
+  </div>
+
+  <div class="status" id="status">
+    Готов к подключению
+  </div>
+</div>
+
+<script>
+const entry = document.getElementById("entry");
+const screen = document.getElementById("screen");
+const statusEl = document.getElementById("status");
+
+let sessionId = crypto.randomUUID();
+let active = false;
+
+for (const key of ["1","2","3","4","5","6",
+                   "7","8","9","*","0","#"]) {
+  const button = document.createElement("button");
+  button.textContent = key;
+  button.onclick = () => entry.value += key;
+  document.getElementById("keys").appendChild(button);
+}
+
+function resetSession() {
+  sessionId = crypto.randomUUID();
+  active = false;
+  entry.value = "*123#";
+  screen.textContent = "Сессия завершена. Введите USSD-код.";
+  statusEl.textContent = "Готов к подключению";
+}
+
+async function sendUSSD() {
+  const msisdn = document.getElementById("msisdn").value.trim();
+  const value = entry.value.trim();
+
+  if (!msisdn || !value) {
+    screen.textContent = "Введите номер и команду.";
+    return;
+  }
+
+  const userInput = value;
+
+  statusEl.textContent = "Отправка запроса...";
+
+  try {
+    const response = await fetch("/api/v1/ussd/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        msisdn: msisdn,
+        session_id: sessionId,
+        input: userInput
+      })
+    });
+
+    const data = await response.json();
+
+    screen.textContent = data.text ??
+      JSON.stringify(data, null, 2);
+
+    if (!response.ok) {
+      statusEl.textContent = "Ошибка API: " + response.status;
+      return;
+    }
+
+    active = data.end !== true;
+    entry.value = "";
+
+    statusEl.textContent = active
+      ? "USSD-сессия активна"
+      : "USSD-сессия завершена";
+
+    if (!active) {
+      sessionId = crypto.randomUUID();
+    }
+
+  } catch (error) {
+    screen.textContent = "Ошибка подключения: " + error.message;
+    statusEl.textContent = "Нет соединения";
+  }
+}
+
+entry.addEventListener("keydown", event => {
+  if (event.key === "Enter") sendUSSD();
+});
+</script>
+</body>
+</html>
