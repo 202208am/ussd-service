@@ -1,0 +1,6 @@
+data/ussd.db
+data/ussd.db-shm
+data/ussd.db-wal
+__pycache__/
+*.pyc
+.venv/
