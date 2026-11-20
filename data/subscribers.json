@@ -1,8 +1,8 @@
-
 [
   {
     "msisdn": "996770123456",
     "balance": 1000,
+    "tariff": "Стандарт",
     "internet_mb": 5000,
     "minutes": 100,
     "sms": 50
@@ -10,8 +10,73 @@
   {
     "msisdn": "996700111222",
     "balance": 500,
+    "tariff": "Стандарт",
     "internet_mb": 2000,
     "minutes": 50,
     "sms": 20
+  },
+  {
+    "msisdn": "996555000111",
+    "balance": 2500,
+    "tariff": "Премиум",
+    "internet_mb": 10000,
+    "minutes": 300,
+    "sms": 100
+  },
+  {
+    "msisdn": "996555000222",
+    "balance": 150,
+    "tariff": "Эконом",
+    "internet_mb": 500,
+    "minutes": 20,
+    "sms": 10
+  },
+  {
+    "msisdn": "996555000333",
+    "balance": 8000,
+    "tariff": "Бизнес",
+    "internet_mb": 20000,
+    "minutes": 1000,
+    "sms": 500
+  },
+  {
+    "msisdn": "996555000444",
+    "balance": 50,
+    "tariff": "Эконом",
+    "internet_mb": 100,
+    "minutes": 5,
+    "sms": 5
+  },
+  {
+    "msisdn": "996555000555",
+    "balance": 3200,
+    "tariff": "Стандарт",
+    "internet_mb": 8000,
+    "minutes": 200,
+    "sms": 80
+  },
+  {
+    "msisdn": "996555000666",
+    "balance": 12000,
+    "tariff": "Премиум",
+    "internet_mb": 50000,
+    "minutes": 2000,
+    "sms": 1000
+  },
+  {
+    "msisdn": "996555000777",
+    "balance": 75,
+    "tariff": "Эконом",
+    "internet_mb": 250,
+    "minutes": 10,
+    "sms": 10
+  },
+  {
+    "msisdn": "996555000888",
+    "balance": 4500,
+    "tariff": "Бизнес",
+    "internet_mb": 15000,
+    "minutes": 500,
+    "sms": 200
   }
 ]

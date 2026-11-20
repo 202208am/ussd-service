@@ -1,6 +1,38 @@
+<<<<<<< HEAD
 data/ussd.db
 data/ussd.db-shm
 data/ussd.db-wal
 __pycache__/
 *.pyc
 .venv/
+=======
+# Виртуальное окружение
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+*.log
+staticfiles/
+media/
+
+# Секреты
+.env
+.env.*
+
+# IDE и ОС
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+>>>>>>> 9ae2a2f (add ussd)
