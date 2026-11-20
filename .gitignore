@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-data/ussd.db
-data/ussd.db-shm
-data/ussd.db-wal
-__pycache__/
-*.pyc
-.venv/
-=======
 # Виртуальное окружение
 .venv/
 venv/
@@ -26,9 +18,14 @@ db.sqlite3-journal
 staticfiles/
 media/
 
+# Локальная SQLite (не-Django)
+data/ussd.db
+data/ussd.db-shm
+data/ussd.db-wal
+
 # Секреты
 .env
-.env.*
+.env.local
 
 # IDE и ОС
 .idea/
