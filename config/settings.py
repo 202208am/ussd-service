@@ -1,7 +1,8 @@
+
 from pathlib import Path
+import os
 
 from dotenv import load_dotenv
-import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,11 +12,15 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY is not set in .env")
 
-DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
+DEBUG = os.getenv("DEBUG", "False").lower() in (
+    "1", "true", "yes", "on"
+)
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for host in os.getenv(
+        "ALLOWED_HOSTS", "localhost,127.0.0.1"
+    ).split(",")
     if host.strip()
 ]
 
@@ -60,16 +65,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Database configuration
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / os.getenv("DATABASE_NAME", "db.sqlite3"),
+        "NAME": BASE_DIR / os.getenv(
+            "DATABASE_NAME", "db.sqlite3"
+        ),
         "OPTIONS": {
             "timeout": 30,
+        },
+        "TEST": {
+            "NAME": BASE_DIR / "test_ussd.sqlite3",
         },
     }
 }
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -99,6 +111,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny"
+    ],
     "EXCEPTION_HANDLER": "ussd.views.exception_handler",
 }
