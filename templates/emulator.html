@@ -318,8 +318,7 @@ const submitButton = popupButtons[1];
 if (canReply) {
   // Меню, где пользователь должен ввести ответ
   cancelButton.style.display = "inline-block";
-  submitButton.textContent =
-    language.value === "ky" ? "Жөнөтүү" : "Отправить";
+  submitButton.textContent = "ok";
 } else {
   // Завершённый запрос, например проверка баланса
   cancelButton.style.display = "none";
@@ -356,6 +355,13 @@ function submitUSSDPopup() {
   ussdOverlay.style.display = "none";
   sendUSSD();
 }
+// Нажатие Enter на клавиатуре во всплывающем окне
+ussdPopupInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    submitUSSDPopup();
+  }
+});
 
 const entry = document.getElementById("entry");
 const screen = document.getElementById("screen");

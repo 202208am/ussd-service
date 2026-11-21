@@ -115,7 +115,6 @@ def _root_menu_text() -> str:
     lines = [msg("packages_header")]
     for cat in _active_categories():
         lines.append(msg("category_line", code=cat.code, title=cat.title))
-    lines.append(msg("exit"))
     return "\n".join(lines)
 
 
