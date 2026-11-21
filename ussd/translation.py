@@ -1,6 +1,12 @@
 from modeltranslation.translator import TranslationOptions, register
 
-from .models import PackageCategory, PackageOffer, Subscriber, UssdMessage
+from .models import (
+    PackageCategory,
+    PackageOffer,
+    Subscriber,
+    UssdCode,
+    UssdMessage,
+)
 
 
 @register(Subscriber)
@@ -21,3 +27,8 @@ class PackageOfferTranslationOptions(TranslationOptions):
 @register(UssdMessage)
 class UssdMessageTranslationOptions(TranslationOptions):
     fields = ("text",)
+
+
+@register(UssdCode)
+class UssdCodeTranslationOptions(TranslationOptions):
+    fields = ("response_text",)

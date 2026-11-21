@@ -15,6 +15,7 @@ from .models import (
     Subscriber,
     Transfer,
     USSDSession,
+    UssdCode,
 )
 
 SESSION_TTL = timedelta(seconds=30)
@@ -25,6 +26,15 @@ DAILY_LIMIT = Decimal("10000")
 
 TRANSFER_RE = re.compile(r"^\*145\*(\d+)\*(\d+(?:\.\d+)?)#$")
 USSD_CODE_RE = re.compile(r"^\*.+#$")
+
+# Запасные коды из ТЗ: работают, даже если таблица UssdCode пуста
+# (свежий деплой без сидов, случайно удалённая запись и т.п.).
+FALLBACK_ACTIONS = {
+    "*100#": UssdCode.ACTION_BALANCE,
+    "*102#": UssdCode.ACTION_PACKAGES,
+    "*111#": UssdCode.ACTION_PACKAGE_MENU,
+}
+TRANSFER_PREFIX = "*145*"
 
 
 def _money(value) -> Decimal:
@@ -209,6 +219,7 @@ def _start_transfer(session: USSDSession, subscriber: Subscriber, input_text: st
     match = TRANSFER_RE.match(input_text)
     if not match:
         _log(subscriber.msisdn, "transfer", "error", {"reason": "bad_format", "input": input_text})
+        session.delete()
         return _resp(msg("bad_transfer_format"), end=True)
 
     receiver_msisdn = match.group(1)
@@ -227,6 +238,7 @@ def _start_transfer(session: USSDSession, subscriber: Subscriber, input_text: st
                 "amount": str(amount),
             },
         )
+        session.delete()
         return _resp(error, end=True)
 
     _touch_session(
@@ -512,6 +524,78 @@ def refresh_ussd(msisdn: str, session_id: str) -> dict:
     return _resp(msg("no_session"), end=True)
 
 
+# ---------------------------------------------------------------------------
+# Диспетчер USSD-кодов (коды хранятся в БД и редактируются в админке)
+# ---------------------------------------------------------------------------
+
+def _find_code(user_input: str) -> tuple[str, UssdCode | None] | None:
+    """
+    Возвращает (action, record) или None, если код неизвестен.
+    record может быть None, если сработал запасной вариант из ТЗ.
+    """
+    # 1) точное совпадение в БД
+    try:
+        record = UssdCode.objects.filter(code=user_input, is_active=True).first()
+    except OperationalError:
+        record = None
+    if record:
+        return record.action, record
+
+    # 2) перевод: *145*номер*сумма# ищем по префиксу из БД
+    if user_input.startswith(TRANSFER_PREFIX):
+        try:
+            record = UssdCode.objects.filter(
+                action=UssdCode.ACTION_TRANSFER, is_active=True
+            ).first()
+        except OperationalError:
+            record = None
+        if record and user_input.startswith(record.code):
+            return record.action, record
+
+    # 3) запасные коды из ТЗ (если в БД пусто или запись удалена)
+    if not UssdCode.objects.filter(code=user_input).exists():
+        if user_input in FALLBACK_ACTIONS:
+            return FALLBACK_ACTIONS[user_input], None
+        if user_input.startswith(TRANSFER_PREFIX) and not UssdCode.objects.filter(
+            action=UssdCode.ACTION_TRANSFER
+        ).exists():
+            return UssdCode.ACTION_TRANSFER, None
+
+    return None
+
+
+def _dispatch_code(
+    session: USSDSession,
+    subscriber: Subscriber,
+    user_input: str,
+    action: str,
+    record: UssdCode | None,
+) -> dict:
+    if action == UssdCode.ACTION_BALANCE:
+        session.delete()
+        return _handle_balance(subscriber)
+
+    if action == UssdCode.ACTION_PACKAGES:
+        session.delete()
+        return _handle_packages(subscriber)
+
+    if action == UssdCode.ACTION_PACKAGE_MENU:
+        return _start_package_menu(session)
+
+    if action == UssdCode.ACTION_TRANSFER:
+        return _start_transfer(session, subscriber, user_input)
+
+    if action == UssdCode.ACTION_STATIC_TEXT:
+        session.delete()
+        text = (record.response_text if record else "") or msg("unknown_ussd")
+        _log(subscriber.msisdn, "ussd", "ok", {"code": user_input, "action": action})
+        return _resp(text, end=True)
+
+    session.delete()
+    _log(subscriber.msisdn, "ussd", "error", {"reason": "unknown_action", "input": user_input})
+    return _resp(msg("unknown_ussd"), end=True)
+
+
 def process_ussd(msisdn: str, session_id: str, user_input: str) -> dict:
     user_input = (user_input or "").strip()
 
@@ -523,8 +607,15 @@ def process_ussd(msisdn: str, session_id: str, user_input: str) -> dict:
     is_ussd_code = bool(USSD_CODE_RE.match(user_input))
 
     if is_ussd_code:
-        # New USSD code always starts a fresh logical session (keep same session_id).
+        found = _find_code(user_input)
+
+        # Новый USSD-код всегда начинает новую логическую сессию (session_id тот же).
         USSDSession.objects.filter(session_id=session_id).delete()
+
+        if not found:
+            _log(msisdn, "ussd", "error", {"reason": "unknown_code", "input": user_input})
+            return _resp(msg("unknown_ussd"), end=True)
+
         session = USSDSession.objects.create(
             session_id=session_id,
             msisdn=msisdn,
@@ -532,21 +623,8 @@ def process_ussd(msisdn: str, session_id: str, user_input: str) -> dict:
             context={},
             last_activity=timezone.now(),
         )
-
-        if user_input == "*100#":
-            session.delete()
-            return _handle_balance(subscriber)
-        if user_input == "*102#":
-            session.delete()
-            return _handle_packages(subscriber)
-        if user_input == "*111#":
-            return _start_package_menu(session)
-        if user_input.startswith("*145*"):
-            return _start_transfer(session, subscriber, user_input)
-
-        session.delete()
-        _log(msisdn, "ussd", "error", {"reason": "unknown_code", "input": user_input})
-        return _resp(msg("unknown_ussd"), end=True)
+        action, record = found
+        return _dispatch_code(session, subscriber, user_input, action, record)
 
     session, timeout_msg = _get_or_create_session(session_id, msisdn)
     if timeout_msg:

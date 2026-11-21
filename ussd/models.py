@@ -70,6 +70,40 @@ class UssdMessage(models.Model):
         ordering = ["key"]
 
 
+class UssdCode(models.Model):
+    ACTION_BALANCE = "balance"
+    ACTION_PACKAGES = "packages"
+    ACTION_PACKAGE_MENU = "package_menu"
+    ACTION_TRANSFER = "transfer"
+    ACTION_STATIC_TEXT = "static_text"
+
+    ACTION_CHOICES = [
+        (ACTION_BALANCE, "Баланс"),
+        (ACTION_PACKAGES, "Остатки пакетов"),
+        (ACTION_PACKAGE_MENU, "Меню пакетов"),
+        (ACTION_TRANSFER, "Перевод (код-префикс, напр. *145*)"),
+        (ACTION_STATIC_TEXT, "Статический текст"),
+    ]
+
+    code = models.CharField("USSD код", max_length=30, unique=True)
+    action = models.CharField("Действие", max_length=20, choices=ACTION_CHOICES)
+    response_text = models.TextField(
+        "Текст ответа",
+        blank=True,
+        help_text="Только для действия «Статический текст»",
+    )
+    is_system = models.BooleanField("Системный", default=False)
+    is_active = models.BooleanField("Активен", default=True)
+
+    def __str__(self):
+        return f"{self.code} -> {self.action}"
+
+    class Meta:
+        verbose_name = "USSD код"
+        verbose_name_plural = "USSD коды"
+        ordering = ["code"]
+
+
 class Transfer(models.Model):
     STATUS_CHOICES = [
         ("done", "Выполнен"),

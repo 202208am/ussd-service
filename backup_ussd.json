@@ -1,0 +1,653 @@
+[
+{
+  "model": "ussd.subscriber",
+  "pk": 31,
+  "fields": {
+    "msisdn": "996770123456",
+    "balance": "1000.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 5000,
+      "minutes": 100,
+      "sms": 50
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 32,
+  "fields": {
+    "msisdn": "996700111222",
+    "balance": "500.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 2000,
+      "minutes": 50,
+      "sms": 20
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 33,
+  "fields": {
+    "msisdn": "996555000111",
+    "balance": "2500.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 10000,
+      "minutes": 300,
+      "sms": 100
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 34,
+  "fields": {
+    "msisdn": "996555000222",
+    "balance": "150.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 500,
+      "minutes": 20,
+      "sms": 10
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 35,
+  "fields": {
+    "msisdn": "996555000333",
+    "balance": "8000.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 20000,
+      "minutes": 1000,
+      "sms": 500
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 36,
+  "fields": {
+    "msisdn": "996555000444",
+    "balance": "50.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 100,
+      "minutes": 5,
+      "sms": 5
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 37,
+  "fields": {
+    "msisdn": "996555000555",
+    "balance": "3200.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 8000,
+      "minutes": 200,
+      "sms": 80
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 38,
+  "fields": {
+    "msisdn": "996555000666",
+    "balance": "12000.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 50000,
+      "minutes": 2000,
+      "sms": 1000
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 39,
+  "fields": {
+    "msisdn": "996555000777",
+    "balance": "75.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 250,
+      "minutes": 10,
+      "sms": 10
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 40,
+  "fields": {
+    "msisdn": "996555000888",
+    "balance": "4500.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {
+      "internet_mb": 15000,
+      "minutes": 500,
+      "sms": 200
+    }
+  }
+},
+{
+  "model": "ussd.subscriber",
+  "pk": 41,
+  "fields": {
+    "msisdn": "996700111111",
+    "balance": "1000.00",
+    "tariff": "Стандарт",
+    "tariff_ru": "Стандарт",
+    "tariff_ky": "Стандарт",
+    "packages": {}
+  }
+},
+{
+  "model": "ussd.packagecategory",
+  "pk": 1,
+  "fields": {
+    "code": "1",
+    "package_key": "internet_mb",
+    "title": "Интернет",
+    "title_ru": "Интернет",
+    "title_ky": "Интернет",
+    "unit": "МБ",
+    "unit_ru": "МБ",
+    "unit_ky": "МБ",
+    "sort_order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packagecategory",
+  "pk": 2,
+  "fields": {
+    "code": "2",
+    "package_key": "minutes",
+    "title": "Минуты",
+    "title_ru": "Минуты",
+    "title_ky": "Мүнөт",
+    "unit": "мин",
+    "unit_ru": "мин",
+    "unit_ky": "мүн",
+    "sort_order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packagecategory",
+  "pk": 3,
+  "fields": {
+    "code": "3",
+    "package_key": "sms",
+    "title": "SMS",
+    "title_ru": "SMS",
+    "title_ky": "SMS",
+    "unit": "SMS",
+    "unit_ru": "SMS",
+    "unit_ky": "SMS",
+    "sort_order": 3,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packageoffer",
+  "pk": 1,
+  "fields": {
+    "category": 1,
+    "code": "1",
+    "label": "1000 МБ",
+    "label_ru": "1000 МБ",
+    "label_ky": "1000 МБ",
+    "amount": 1000,
+    "price": "50.00",
+    "sort_order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packageoffer",
+  "pk": 2,
+  "fields": {
+    "category": 1,
+    "code": "2",
+    "label": "5000 МБ",
+    "label_ru": "5000 МБ",
+    "label_ky": "5000 МБ",
+    "amount": 5000,
+    "price": "200.00",
+    "sort_order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packageoffer",
+  "pk": 3,
+  "fields": {
+    "category": 2,
+    "code": "1",
+    "label": "50 мин",
+    "label_ru": "50 мин",
+    "label_ky": "50 мүн",
+    "amount": 50,
+    "price": "30.00",
+    "sort_order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packageoffer",
+  "pk": 4,
+  "fields": {
+    "category": 2,
+    "code": "2",
+    "label": "100 мин",
+    "label_ru": "100 мин",
+    "label_ky": "100 мүн",
+    "amount": 100,
+    "price": "50.00",
+    "sort_order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packageoffer",
+  "pk": 5,
+  "fields": {
+    "category": 3,
+    "code": "1",
+    "label": "50 SMS",
+    "label_ru": "50 SMS",
+    "label_ky": "50 SMS",
+    "amount": 50,
+    "price": "20.00",
+    "sort_order": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.packageoffer",
+  "pk": 6,
+  "fields": {
+    "category": 3,
+    "code": "2",
+    "label": "100 SMS",
+    "label_ru": "100 SMS",
+    "label_ky": "100 SMS",
+    "amount": 100,
+    "price": "35.00",
+    "sort_order": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 1,
+  "fields": {
+    "key": "packages_header",
+    "text": "Пакеты:",
+    "text_ru": "Пакеты:",
+    "text_ky": "Пакеттер:"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 2,
+  "fields": {
+    "key": "exit",
+    "text": "0. Выход",
+    "text_ru": "0. Выход",
+    "text_ky": "0. Чыгуу"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 3,
+  "fields": {
+    "key": "back",
+    "text": "0. Назад",
+    "text_ru": "0. Назад",
+    "text_ky": "0. Артка"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 4,
+  "fields": {
+    "key": "confirm",
+    "text": "1. Подтвердить",
+    "text_ru": "1. Подтвердить",
+    "text_ky": "1. Ырастоо"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 5,
+  "fields": {
+    "key": "cancel",
+    "text": "2. Отмена",
+    "text_ru": "2. Отмена",
+    "text_ky": "2. Жокко чыгаруу"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 6,
+  "fields": {
+    "key": "buy_confirm",
+    "text": "Купить {label} за {price} сом?",
+    "text_ru": "Купить {label} за {price} сом?",
+    "text_ky": "{label} үчүн {price} сом төлөнсүнбү?"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 7,
+  "fields": {
+    "key": "transfer_confirm",
+    "text": "Перевод {amount} сом на {receiver}\nКомиссия {fee} сом. Итого {total} сом",
+    "text_ru": "Перевод {amount} сом на {receiver}\nКомиссия {fee} сом. Итого {total} сом",
+    "text_ky": "{receiver} номерине {amount} сом которуу\nКомиссия {fee} сом. Жалпы {total} сом"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 8,
+  "fields": {
+    "key": "balance",
+    "text": "Баланс: {balance} сом",
+    "text_ru": "Баланс: {balance} сом",
+    "text_ky": "Баланс: {balance} сом"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 9,
+  "fields": {
+    "key": "packages_remain_header",
+    "text": "Остатки пакетов:",
+    "text_ru": "Остатки пакетов:",
+    "text_ky": "Пакеттердин калдыгы:"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 10,
+  "fields": {
+    "key": "package_line",
+    "text": "{title}: {amount} {unit}",
+    "text_ru": "{title}: {amount} {unit}",
+    "text_ky": "{title}: {amount} {unit}"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 11,
+  "fields": {
+    "key": "offer_line",
+    "text": "{code}. {label} - {price} сом",
+    "text_ru": "{code}. {label} - {price} сом",
+    "text_ky": "{code}. {label} - {price} сом"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 12,
+  "fields": {
+    "key": "category_line",
+    "text": "{code}. {title}",
+    "text_ru": "{code}. {title}",
+    "text_ky": "{code}. {title}"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 13,
+  "fields": {
+    "key": "session_expired",
+    "text": "Сессия истекла. Начните заново.",
+    "text_ru": "Сессия истекла. Начните заново.",
+    "text_ky": "Сессия аяктады. Кайра баштаңыз."
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 14,
+  "fields": {
+    "key": "invalid_choice",
+    "text": "Неверный выбор",
+    "text_ru": "Неверный выбор",
+    "text_ky": "Туура эмес тандоо"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 15,
+  "fields": {
+    "key": "exit_menu",
+    "text": "Выход из меню",
+    "text_ru": "Выход из меню",
+    "text_ky": "Менюдан чыгуу"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 16,
+  "fields": {
+    "key": "purchase_cancelled",
+    "text": "Покупка отменена",
+    "text_ru": "Покупка отменена",
+    "text_ky": "Сатып алуу жокко чыгарылды"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 17,
+  "fields": {
+    "key": "transfer_cancelled",
+    "text": "Перевод отменен",
+    "text_ru": "Перевод отменен",
+    "text_ky": "Которуу жокко чыгарылды"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 18,
+  "fields": {
+    "key": "session_reset",
+    "text": "Сессия сброшена. Начните заново.",
+    "text_ru": "Сессия сброшена. Начните заново.",
+    "text_ky": "Сессия тазаланды. Кайра баштаңыз."
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 19,
+  "fields": {
+    "key": "subscriber_not_found",
+    "text": "Абонент не найден",
+    "text_ru": "Абонент не найден",
+    "text_ky": "Абонент табылган жок"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 20,
+  "fields": {
+    "key": "unknown_ussd",
+    "text": "Неизвестная USSD-команда",
+    "text_ru": "Неизвестная USSD-команда",
+    "text_ky": "Белгисиз USSD-команда"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 21,
+  "fields": {
+    "key": "no_session",
+    "text": "Нет активной сессии. Введите USSD-код.",
+    "text_ru": "Нет активной сессии. Введите USSD-код.",
+    "text_ky": "Активдүү сессия жок. USSD-кодду киргизиңиз."
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 22,
+  "fields": {
+    "key": "bad_transfer_format",
+    "text": "Неверный формат. Используйте *145*номер*сумма#",
+    "text_ru": "Неверный формат. Используйте *145*номер*сумма#",
+    "text_ky": "Формат туура эмес. *145*номер*сумма# колдонуңуз"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 23,
+  "fields": {
+    "key": "amount_range",
+    "text": "Сумма должна быть от {min} до {max} сом",
+    "text_ru": "Сумма должна быть от {min} до {max} сом",
+    "text_ky": "Сумма {min} менен {max} сомдун ортосунда болушу керек"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 24,
+  "fields": {
+    "key": "self_transfer",
+    "text": "Нельзя переводить самому себе",
+    "text_ru": "Нельзя переводить самому себе",
+    "text_ky": "Өзүңүзгө которууга болбойт"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 25,
+  "fields": {
+    "key": "receiver_not_found",
+    "text": "Получатель не найден",
+    "text_ru": "Получатель не найден",
+    "text_ky": "Алуучу табылган жок"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 26,
+  "fields": {
+    "key": "insufficient_funds",
+    "text": "Недостаточно средств",
+    "text_ru": "Недостаточно средств",
+    "text_ky": "Каражат жетишсиз"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 27,
+  "fields": {
+    "key": "daily_limit",
+    "text": "Превышен дневной лимит ({limit} сом)",
+    "text_ru": "Превышен дневной лимит ({limit} сом)",
+    "text_ky": "Күнүмдүк лимит ашып кетти ({limit} сом)"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 28,
+  "fields": {
+    "key": "transfer_done",
+    "text": "Перевод {amount} сом на {receiver} выполнен. Комиссия {fee} сом.",
+    "text_ru": "Перевод {amount} сом на {receiver} выполнен. Комиссия {fee} сом.",
+    "text_ky": "{receiver} номерине {amount} сом которулду. Комиссия {fee} сом."
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 29,
+  "fields": {
+    "key": "purchase_error",
+    "text": "Ошибка покупки",
+    "text_ru": "Ошибка покупки",
+    "text_ky": "Сатып алуу катасы"
+  }
+},
+{
+  "model": "ussd.ussdmessage",
+  "pk": 30,
+  "fields": {
+    "key": "purchase_done",
+    "text": "Пакет {label} подключен. Списано {price} сом.",
+    "text_ru": "Пакет {label} подключен. Списано {price} сом.",
+    "text_ky": "{label} пакети кошулду. {price} сом алынды."
+  }
+},
+{
+  "model": "ussd.operationlog",
+  "pk": 46,
+  "fields": {
+    "msisdn": "996700111111",
+    "op_type": "ussd",
+    "details": {
+      "reason": "unknown_code",
+      "input": "*123#"
+    },
+    "status": "error",
+    "created_at": "2026-11-20T17:22:20.890Z"
+  }
+},
+{
+  "model": "ussd.operationlog",
+  "pk": 47,
+  "fields": {
+    "msisdn": "996700111111",
+    "op_type": "balance",
+    "details": {
+      "balance": "1000.00"
+    },
+    "status": "ok",
+    "created_at": "2026-11-20T17:22:48.880Z"
+  }
+},
+{
+  "model": "ussd.operationlog",
+  "pk": 48,
+  "fields": {
+    "msisdn": "996700111111",
+    "op_type": "ussd",
+    "details": {
+      "reason": "unknown_code",
+      "input": "*123#"
+    },
+    "status": "error",
+    "created_at": "2026-11-20T18:26:00.566Z"
+  }
+}
+]

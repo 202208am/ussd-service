@@ -8,6 +8,7 @@ from .models import (
     Subscriber,
     Transfer,
     USSDSession,
+    UssdCode,
     UssdMessage,
 )
 
@@ -42,6 +43,24 @@ class PackageOfferAdmin(TranslationAdmin):
 class UssdMessageAdmin(TranslationAdmin):
     list_display = ("key", "text")
     search_fields = ("key", "text")
+
+
+@admin.register(UssdCode)
+class UssdCodeAdmin(TranslationAdmin):
+    list_display = ("code", "action", "is_system", "is_active")
+    list_filter = ("action", "is_active", "is_system")
+    search_fields = ("code", "response_text")
+
+    def get_readonly_fields(self, request, obj=None):
+        # Системные коды из ТЗ нельзя переименовать или сменить им действие.
+        if obj and obj.is_system:
+            return ("code", "action", "is_system")
+        return ("is_system",)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_system:
+            return False
+        return super().has_delete_permission(request, obj)
 
 
 @admin.register(Transfer)
