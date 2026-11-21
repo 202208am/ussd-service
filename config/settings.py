@@ -69,20 +69,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database configuration
+import dj_database_url
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / os.getenv(
-            "DATABASE_NAME", "db.sqlite3"
-        ),
-        "OPTIONS": {
-            "timeout": 30,
-        },
-        "TEST": {
-            "NAME": BASE_DIR / "test_ussd.sqlite3",
-        },
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
+
+DATABASES["default"]["OPTIONS"] = (
+    {"timeout": 30}
+    if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3"
+    else {}
+)
+
+DATABASES["default"]["TEST"] = {
+    "NAME": BASE_DIR / "test_ussd.sqlite3"
+} if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3" else {}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
