@@ -26,6 +26,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     "modeltranslation",
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -130,4 +131,103 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny"
     ],
     "EXCEPTION_HANDLER": "ussd.views.exception_handler",
+}
+
+JAZZMIN_SETTINGS = {
+    # Заголовки
+    "site_title": "USSD Admin",
+    "site_header": "USSD",
+    "site_brand": "USSD Service",
+    "welcome_sign": "Управление USSD-сервисом",
+    "copyright": "USSD Service",
+
+    # Поиск сверху (по абонентам)
+    "search_model": ["ussd.Subscriber"],
+
+    # Минимализм: убираем лишнее
+    "show_ui_builder": False,
+    "related_modal_active": False,
+    "language_chooser": False,
+
+    # Верхнее меню
+    "topmenu_links": [
+        {"name": "Главная", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Логи", "model": "ussd.OperationLog"},
+    ],
+
+    # Боковое меню
+    "navigation_expanded": True,
+    "hide_apps": ["auth"],
+    "hide_models": [],
+    "order_with_respect_to": [
+        "ussd.Subscriber",
+        "ussd.UssdCode",
+        "ussd.PackageCategory",
+        "ussd.PackageOffer",
+        "ussd.UssdMessage",
+        "ussd.Transfer",
+        "ussd.OperationLog",
+        "ussd.USSDSession",
+    ],
+
+    # Иконки (Font Awesome 5)
+    "icons": {
+        "ussd.Subscriber": "fas fa-user",
+        "ussd.UssdCode": "fas fa-hashtag",
+        "ussd.PackageCategory": "fas fa-layer-group",
+        "ussd.PackageOffer": "fas fa-box",
+        "ussd.UssdMessage": "fas fa-comment-dots",
+        "ussd.Transfer": "fas fa-exchange-alt",
+        "ussd.OperationLog": "fas fa-clipboard-list",
+        "ussd.USSDSession": "fas fa-hourglass-half",
+    },
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-circle",
+
+    # Формы: вкладки удобны для полей RU / KY от modeltranslation
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+    },
+}
+
+JAZZMIN_UI_TWEAKS = {
+    # Светлая минималистичная тема + тёмная для переключателя
+    "theme": "flatly",
+    "dark_mode_theme": "darkly",
+
+    # Компактность и чистые линии
+    "navbar_small_text": True,
+    "footer_small_text": True,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "no_navbar_border": True,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+
+    # Цвета: спокойные
+    "brand_colour": "navbar-white",
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "sidebar": "sidebar-light-primary",
+
+    # Боковое меню: плоское и компактное
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": True,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": True,
+
+    # Кнопки
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-outline-info",
+        "warning": "btn-outline-warning",
+        "danger": "btn-outline-danger",
+        "success": "btn-success",
+    },
 }
