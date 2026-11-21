@@ -7,6 +7,7 @@
 <title>USSD Simulator</title>
 <style>
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -15,8 +16,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
 }
+
 .phone {
   width: 350px;
   max-width: 100%;
@@ -27,22 +29,25 @@ body {
   color: white;
   box-shadow: 0 25px 70px #0008;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
   margin-bottom: 25px;
 }
+
 .screen {
   background: #202c40;
   border-radius: 16px;
   padding: 18px;
-  min-height: 180px;
+  min-height: 150px;
   margin-bottom: 20px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   line-height: 1.6;
 }
+
 input {
   width: 100%;
   padding: 14px;
@@ -53,40 +58,178 @@ input {
   font-size: 17px;
   margin-bottom: 12px;
 }
+
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #56637a;
+  background: #151e2e;
+  color: white;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+/* Круглая клавиатура телефона */
 .keys {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-  margin: 12px 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
+  gap: 12px;
+  margin: 20px 0;
 }
+
 button {
-  padding: 15px;
   border: 0;
-  border-radius: 12px;
-  background: #34445e;
   color: white;
-  font-size: 19px;
   cursor: pointer;
 }
-button:hover { background: #486083; }
+
+.keys button {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #34445e;
+  color: white;
+  font-size: 28px;
+  font-weight: 400;
+  padding: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.keys button:hover {
+  background: #486083;
+}
+
+.keys button:active {
+  background: #607a9e;
+  transform: scale(0.95);
+}
+
 .actions {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+  margin-top: 25px;
 }
+
 .actions button {
-  flex: 1;
-  font-size: 15px;
+  flex: none;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 .call { background: #16a765; }
 .end { background: #cf4050; }
+
+.call:hover { background: #128a54; }
+.end:hover { background: #b93444; }
+
 .status {
   font-size: 12px;
   color: #a9b7ce;
   margin-top: 12px;
   text-align: center;
 }
+
+@media (max-width: 380px) {
+  .phone {
+    padding: 16px;
+    border-width: 5px;
+  }
+
+  .keys {
+    gap: 10px;
+  }
+
+  .keys button {
+    width: min(72px, 100%);
+    aspect-ratio: 1;
+    height: auto;
+  }
+}
+/* Затемнение экрана */
+.ussd-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Всплывающее USSD-окно */
+.ussd-popup {
+  width: 340px;
+  max-width: 100%;
+  background: #f5f5f5;
+  color: #202124;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  font-family: Arial, sans-serif;
+}
+
+.ussd-popup-title {
+  font-size: 19px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.ussd-popup-message {
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 45vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+#ussd-popup-input {
+  width: 100%;
+  background: transparent;
+  color: #202124;
+  border: none;
+  border-bottom: 2px solid #1683e8;
+  border-radius: 0;
+  padding: 12px 4px;
+  font-size: 17px;
+  outline: none;
+  margin-bottom: 22px;
+}
+
+.ussd-popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 22px;
+}
+
+.ussd-popup-actions button {
+  background: transparent;
+  color: #1683e8;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 10px 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.ussd-popup-actions button:hover {
+  color: #0056a8;
+}
 </style>
 </head>
+
 <body>
 <div class="phone">
   <div class="header">
@@ -94,47 +237,160 @@ button:hover { background: #486083; }
     <span>● ● ● 100%</span>
   </div>
 
-  <div class="screen" id="screen">Введите USSD-код для начала.</div>
+  <div class="screen" id="screen">
+Введите USSD-код для начала.</div>
 
-  <input id="msisdn"
+  <input
+    id="msisdn"
     value="996700111111"
-    placeholder="Номер абонента">
+    placeholder="Номер абонента"
+  >
 
-  <select id="language" style="width:100%;padding:12px;border-radius:10px;border:1px solid #56637a;background:#151e2e;color:white;font-size:15px;margin-bottom:12px;">
-    <option value="ru">Русский</option>
-    <option value="ky">Кыргызча</option>
-  </select>
+  <input type="hidden" id="language" value="ru">
 
-  <input id="entry"
+  <input
+    id="entry"
     value="*123#"
-    placeholder="USSD-код или ответ">
+    placeholder="USSD-код или ответ"
+  >
 
   <div class="keys" id="keys"></div>
 
   <div class="actions">
-    <button class="call" id="send-button" onclick="sendUSSD()">
-      Отправить
-    </button>
-    <button class="end" id="end-button" onclick="resetSession()">
-      Завершить
-    </button>
-  </div>
+  <button class="call" id="send-button"
+          onclick="sendUSSD()" aria-label="Отправить">
+    ☎
+  </button>
+
+  <button class="end" id="end-button"
+          onclick="resetSession()" aria-label="Завершить">
+    ✕
+  </button>
+</div>
 
   <div class="status" id="status">
     Готов к подключению
   </div>
 </div>
 
+<div class="ussd-overlay" id="ussd-overlay">
+  <div class="ussd-popup">
+    <div class="ussd-popup-title">USSD SERVICE</div>
+
+    <div class="ussd-popup-message" id="ussd-popup-message"></div>
+
+    <input
+      type="text"
+      id="ussd-popup-input"
+      placeholder="Введите ответ"
+      autocomplete="off"
+    >
+
+    <div class="ussd-popup-actions">
+      <button type="button" onclick="closeUSSDPopup()">Отмена</button>
+      <button type="button" onclick="submitUSSDPopup()">Отправить</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// Элементы всплывающего USSD-окна
+const ussdOverlay = document.getElementById("ussd-overlay");
+const ussdPopupMessage = document.getElementById("ussd-popup-message");
+const ussdPopupInput = document.getElementById("ussd-popup-input");
+
+// Показываем USSD-окно
+function showUSSDPopup(message, canReply = true) {
+  ussdPopupMessage.textContent = message;
+  ussdPopupInput.value = "";
+
+  // Если ответ не требуется, скрываем поле ввода
+  ussdPopupInput.style.display = canReply ? "block" : "none";
+
+  // Настраиваем кнопки в зависимости от типа USSD-ответа
+const popupButtons = document.querySelectorAll(
+  ".ussd-popup-actions button"
+);
+
+const cancelButton = popupButtons[0];
+const submitButton = popupButtons[1];
+
+if (canReply) {
+  // Меню, где пользователь должен ввести ответ
+  cancelButton.style.display = "inline-block";
+  submitButton.textContent =
+    language.value === "ky" ? "Жөнөтүү" : "Отправить";
+} else {
+  // Завершённый запрос, например проверка баланса
+  cancelButton.style.display = "none";
+  submitButton.textContent = "OK";
+}
+
+  ussdOverlay.style.display = "flex";
+
+  if (canReply) {
+    ussdPopupInput.focus();
+  }
+}
+
+// Закрываем окно и завершаем сессию
+function closeUSSDPopup() {
+  ussdOverlay.style.display = "none";
+  resetSession();
+}
+
+// Отправляем ответ из всплывающего окна
+function submitUSSDPopup() {
+  if (ussdPopupInput.style.display === "none") {
+  closeUSSDPopup();
+  return;
+}
+  const value = ussdPopupInput.value.trim();
+
+  if (!value) {
+  ussdPopupInput.focus();
+  return;
+}
+
+  entry.value = value;
+  ussdOverlay.style.display = "none";
+  sendUSSD();
+}
+
 const entry = document.getElementById("entry");
 const screen = document.getElementById("screen");
 const statusEl = document.getElementById("status");
+const language = document.getElementById("language");
+const msisdnInput = document.getElementById("msisdn");
 
 let sessionId = crypto.randomUUID();
 let active = false;
 let lastReadOnlyCode = null;
-const language = document.getElementById("language");
-const msisdnInput = document.getElementById("msisdn");
+
+// Проверяем, выбирал ли пользователь язык раньше
+const savedLanguage = localStorage.getItem("ussd_language");
+
+// Если язык уже сохранён, повторно не спрашиваем
+let languageSelected = savedLanguage === "ru" || savedLanguage === "ky";
+
+// Запоминаем первую USSD-команду
+let pendingCode = "";
+
+// Восстанавливаем сохранённый язык
+if (languageSelected) {
+  language.value = savedLanguage;
+}
+
+// Экран выбора языка
+function showLanguageMenu() {
+  screen.textContent =
+    "Выберите язык / Тилди тандаңыз\n\n" +
+    "1. Кыргызча\n" +
+    "2. Русский";
+
+  statusEl.textContent = "Введите 1 или 2";
+}
+
 const uiText = {
   ru: {
     initial: "Введите USSD-код для начала.",
@@ -153,6 +409,7 @@ const uiText = {
     ended: "Сессия завершена. Введите USSD-код.",
     switched: "Язык переключён. Отправьте USSD-код, чтобы получить данные на выбранном языке."
   },
+
   ky: {
     initial: "Баштоо үчүн USSD-кодду киргизиңиз.",
     phone: "Абоненттин номери",
@@ -174,20 +431,42 @@ const uiText = {
 
 function updateInterfaceLanguage() {
   const t = uiText[language.value] || uiText.ru;
+
   document.documentElement.lang = language.value;
   msisdnInput.placeholder = t.phone;
   entry.placeholder = t.code;
-  document.getElementById("send-button").textContent = t.send;
-  document.getElementById("end-button").textContent = t.end;
+
+  document.getElementById("send-button").textContent = "☎";
+document.getElementById("end-button").textContent = "✕";
+
+document.getElementById("send-button").title = t.send;
+document.getElementById("end-button").title = t.end;
+
+document.getElementById("send-button").setAttribute("aria-label", t.send);
+document.getElementById("end-button").setAttribute("aria-label", t.end);
+
   statusEl.textContent = t.ready;
-  screen.textContent = active ? screen.textContent : t.initial;
+
+  if (!active) {
+    screen.textContent = t.initial;
+  }
 }
 
-for (const key of ["1","2","3","4","5","6",
-                   "7","8","9","*","0","#"]) {
+/* Создаём клавиатуру */
+for (const key of [
+  "1","2","3",
+  "4","5","6",
+  "7","8","9",
+  "*","0","#"
+]) {
   const button = document.createElement("button");
+  button.type = "button";
   button.textContent = key;
-  button.onclick = () => entry.value += key;
+
+  button.onclick = () => {
+    entry.value += key;
+  };
+
   document.getElementById("keys").appendChild(button);
 }
 
@@ -196,7 +475,9 @@ function resetSession() {
   active = false;
   lastReadOnlyCode = null;
   entry.value = "*123#";
+
   const t = uiText[language.value] || uiText.ru;
+
   screen.textContent = t.ended;
   statusEl.textContent = t.ready;
 }
@@ -204,10 +485,13 @@ function resetSession() {
 async function refreshUSSD() {
   const t = uiText[language.value] || uiText.ru;
   const msisdn = msisdnInput.value.trim();
+
   try {
     const response = await fetch("/api/v1/ussd/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         msisdn,
         session_id: sessionId,
@@ -216,14 +500,19 @@ async function refreshUSSD() {
         refresh: true
       })
     });
+
     const data = await response.json();
-    screen.textContent = data.text ?? JSON.stringify(data, null, 2);
+
+    screen.textContent =
+      data.text ?? JSON.stringify(data, null, 2);
+
     if (!response.ok || data.end) {
       active = false;
       statusEl.textContent = t.ready;
     } else {
       statusEl.textContent = t.active;
     }
+
   } catch (error) {
     screen.textContent = t.connectionError + error.message;
     statusEl.textContent = t.offline;
@@ -232,10 +521,13 @@ async function refreshUSSD() {
 
 async function refreshReadOnlyResult() {
   const t = uiText[language.value] || uiText.ru;
+
   try {
     const response = await fetch("/api/v1/ussd/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         msisdn: msisdnInput.value.trim(),
         session_id: sessionId,
@@ -243,9 +535,16 @@ async function refreshReadOnlyResult() {
         language: language.value
       })
     });
+
     const data = await response.json();
-    screen.textContent = data.text ?? JSON.stringify(data, null, 2);
-    statusEl.textContent = response.ok ? t.finished : t.apiError + response.status;
+
+    screen.textContent =
+      data.text ?? JSON.stringify(data, null, 2);
+
+    statusEl.textContent = response.ok
+      ? t.finished
+      : t.apiError + response.status;
+
   } catch (error) {
     screen.textContent = t.connectionError + error.message;
     statusEl.textContent = t.offline;
@@ -253,11 +552,56 @@ async function refreshReadOnlyResult() {
 }
 
 async function sendUSSD() {
-  const msisdn = document.getElementById("msisdn").value.trim();
+  const msisdn = msisdnInput.value.trim();
   const value = entry.value.trim();
 
+    // Первый запуск: предлагаем выбрать язык
+  if (!languageSelected) {
+
+    // Если пользователь уже видит меню выбора языка
+    if (pendingCode) {
+
+      if (value !== "1" && value !== "2") {
+        showLanguageMenu();
+        statusEl.textContent = "Введите 1 или 2 / 1 же 2 киргизиңиз";
+        entry.value = "";
+        return;
+      }
+
+      // 1 — Кыргызча, 2 — Русский
+      language.value = value === "1" ? "ky" : "ru";
+      languageSelected = true;
+
+      // Сохраняем язык в браузере
+      localStorage.setItem("ussd_language", language.value);
+
+      // Восстанавливаем первоначальную команду
+      const firstCode = pendingCode;
+      pendingCode = "";
+
+      updateInterfaceLanguage();
+      entry.value = firstCode;
+
+      // Выполняем команду на выбранном языке
+      return sendUSSD();
+    }
+
+    // Сохраняем первую USSD-команду
+    if (!value || !value.startsWith("*") || !value.endsWith("#")) {
+      screen.textContent =
+        "Введите USSD-код / USSD-кодду киргизиңиз";
+      return;
+    }
+
+    pendingCode = value;
+    entry.value = "";
+    showLanguageMenu();
+    return;
+  }
+
   if (!msisdn || !value) {
-    screen.textContent = (uiText[language.value] || uiText.ru).missing;
+    screen.textContent =
+      (uiText[language.value] || uiText.ru).missing;
     return;
   }
 
@@ -277,24 +621,32 @@ async function sendUSSD() {
         msisdn: msisdn,
         session_id: sessionId,
         input: userInput,
-        language: document.getElementById("language").value
+        language: language.value
       })
     });
 
     const data = await response.json();
 
-    screen.textContent = data.text ??
-      JSON.stringify(data, null, 2);
+    const message = data.text ?? JSON.stringify(data, null, 2);
 
-    if (!response.ok) {
-      statusEl.textContent = t.apiError + response.status;
-      return;
-    }
+screen.textContent = message;
 
-    active = data.end !== true;
-    lastReadOnlyCode = !active && ["*100#", "*102#"].includes(userInput)
-      ? userInput
-      : null;
+if (!response.ok) {
+  statusEl.textContent = t.apiError + response.status;
+  showUSSDPopup(message, false);
+  return;
+}
+
+active = data.end !== true;
+
+// Показываем ответ Django во всплывающем окне
+showUSSDPopup(message, active);
+
+    lastReadOnlyCode =
+      !active && ["*100#", "*102#"].includes(userInput)
+        ? userInput
+        : null;
+
     entry.value = "";
 
     statusEl.textContent = active
@@ -312,21 +664,26 @@ async function sendUSSD() {
 }
 
 entry.addEventListener("keydown", event => {
-  if (event.key === "Enter") sendUSSD();
+  if (event.key === "Enter") {
+    sendUSSD();
+  }
 });
 
 language.addEventListener("change", () => {
   updateInterfaceLanguage();
+
   if (active) {
     refreshUSSD();
   } else if (lastReadOnlyCode) {
     refreshReadOnlyResult();
   } else {
-    screen.textContent = (uiText[language.value] || uiText.ru).switched;
+    screen.textContent =
+      (uiText[language.value] || uiText.ru).switched;
   }
 });
 
 updateInterfaceLanguage();
 </script>
+
 </body>
 </html>
